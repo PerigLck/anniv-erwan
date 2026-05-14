@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bon Anniversaire Erwan !</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ECRAN 1 : Anniversaire -->
+    <section id="birthday-screen" class="screen active">
+        <div class="confetti-container" id="confetti-container"></div>
+        <h1 class="title">🎂 Bon Anniversaire Erwan ! 🎂</h1>
+        <p class="subtitle">Joyeux anniversaire grand frère !</p>
+        <div class="photos-grid">
+            <div class="photo-frame"><img src="photos/Snapchat-731515046.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/Screenshot_20210206_173255_com.snapchat.android.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/Snapchat-274093167.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/Snapchat-224043164.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/Snapchat-906670179.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/IMG_20250222_033118.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/IMG_20221222_024629.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/14215415_1062427113871306_1977589809_o.jpg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/Screenshot_2018-05-25-14-00-52-517.jpeg" alt="Erwan"></div>
+            <div class="photo-frame"><img src="photos/IMG_20260412_143653.jpg" alt="Erwan"></div>
+        </div>
+        <div class="photos-with-arrows">
+            <div class="side-arrow side-arrow-left">
+                <span class="arrow-down">▼</span>
+                <span class="arrow-down">▼</span>
+                <span class="arrow-down">▼</span>
+            </div>
+            <p class="gift-text scroll-text">Un cadeau t'attend plus bas...</p>
+            <div class="side-arrow side-arrow-right">
+                <span class="arrow-down">▼</span>
+                <span class="arrow-down">▼</span>
+                <span class="arrow-down">▼</span>
+            </div>
+        </div>
+
+        <div class="gift-section">
+            <p class="gift-text">J'ai un cadeau spécial pour toi...<br>Prêt à découvrir quelle action tu vas recevoir ?</p>
+            <button class="btn btn-continue" onclick="showRoulette()">Continuer →</button>
+        </div>
+    </section>
+
+    <!-- ECRAN 2 : Roulette -->
+    <section id="roulette-screen" class="screen">
+        <h2 class="roulette-title">🎰 La Roulette du MSCI World 🎰</h2>
+        <p class="roulette-subtitle">Lance la roue pour découvrir ton action cadeau !<br><span id="company-count" style="font-size:0.85em; color:#667eea;"></span></p>
+
+        <div class="wheel-container">
+            <div class="wheel-pointer">▼</div>
+            <canvas id="wheel-canvas" width="420" height="420"></canvas>
+        </div>
+
+        <button class="btn btn-spin" id="spin-btn" onclick="spinWheel()">🎲 Lancer la roue !</button>
+
+        <div id="result-container" class="result-container hidden">
+            <div class="result-card">
+                <p class="result-label">🎉 Tu as gagné une action 🎉</p>
+                <h2 class="result-company" id="result-company"></h2>
+                <p class="result-ticker" id="result-ticker"></p>
+                <p class="result-message">Joyeux anniversaire Erwan !<br>Cette action est à toi 🎁</p>
+                <button class="btn btn-retry" onclick="retry()">🔄 Relancer</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="msci_world_constituents.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
