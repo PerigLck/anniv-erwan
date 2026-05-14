@@ -2,12 +2,10 @@
 const companies = msciWorldConstituents;
 
 // Nombre de segments affichés sur la roue
-const SEGMENTS = 16;
+const SEGMENTS = 8;
 const COLORS = [
     "#e63946", "#457b9d", "#2a9d8f", "#e9c46a",
-    "#f4a261", "#264653", "#6a4c93", "#1982c4",
-    "#8ac926", "#ff595e", "#ffca3a", "#6a0572",
-    "#1b998b", "#ff6b6b", "#4ecdc4", "#c9184a"
+    "#f4a261", "#264653", "#6a4c93", "#1982c4"
 ];
 
 let canvas, ctx;
@@ -165,19 +163,28 @@ function spinWheel() {
     document.getElementById("result-container").classList.add("hidden");
 
     const segmentAngle = (2 * Math.PI) / SEGMENTS;
-    // 5 à 8 tours complets + position aléatoire
-    const fullRotations = (5 + Math.random() * 3) * 2 * Math.PI;
     // Choisir un segment gagnant aléatoire
     const winIndex = Math.floor(Math.random() * SEGMENTS);
-    // Le pointeur est en haut (angle -PI/2). On veut que le segment winIndex
-    // soit aligné sous le pointeur.
-    const targetSegmentCenter = winIndex * segmentAngle + segmentAngle / 2;
-    // L'angle final : le pointeur est à -PI/2 (en haut du canvas).
-    // Pour que le segment winIndex soit sous le pointeur, on a besoin que
-    // currentAngle + winIndex*segmentAngle + segmentAngle/2 = -PI/2 (mod 2PI)
-    // => currentAngle = -PI/2 - targetSegmentCenter
-    const finalAngle = -Math.PI / 2 - targetSegmentCenter;
-    const totalRotation = fullRotations + (finalAngle - currentAngle % (2 * Math.PI));
+
+    // Le pointeur est en haut (angle -PI/2). On veut que le centre du segment
+    // winIndex soit aligné sous le pointeur.
+    // Segment i est dessiné de currentAngle + i*segmentAngle à currentAngle + (i+1)*segmentAngle
+    // Son centre est à currentAngle + i*segmentAngle + segmentAngle/2
+    // On veut : finalAngle + winIndex*segmentAngle + segmentAngle/2 = -PI/2 (mod 2PI)
+    // => finalAngle = -PI/2 - winIndex*segmentAngle - segmentAngle/2
+    const desiredAngle = -Math.PI / 2 - winIndex * segmentAngle - segmentAngle / 2;
+
+    // Normaliser l'angle courant et l'angle désiré dans [0, 2PI)
+    const currentNorm = ((currentAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const desiredNorm = ((desiredAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+    // Rotation supplémentaire après les tours complets
+    let extraRotation = desiredNorm - currentNorm;
+    if (extraRotation < 0) extraRotation += 2 * Math.PI;
+
+    // 5 à 8 tours complets (entiers) + rotation exacte pour atterrir sur le bon segment
+    const numFullTurns = 5 + Math.floor(Math.random() * 4);
+    const totalRotation = numFullTurns * 2 * Math.PI + extraRotation;
 
     const startAngle = currentAngle;
     const startTime = performance.now();
@@ -248,8 +255,9 @@ function launchResultConfetti() {
 
 function retry() {
     document.getElementById("result-container").classList.add("hidden");
-    // Recharger des sociétés aléatoires pour la prochaine rotation
+    // Recharger des sociétés aléatoires et réinitialiser la roue
     wheelCompanies = pickRandomCompanies();
+    currentAngle = 0;
     drawWheel();
 }
 
