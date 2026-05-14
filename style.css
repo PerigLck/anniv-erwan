@@ -20,6 +20,8 @@ body {
     min-height: 100vh;
     padding: 2rem 1rem;
     position: relative;
+    opacity: 0;
+    transition: opacity 0.6s ease;
 }
 
 #birthday-screen.active {
@@ -29,6 +31,7 @@ body {
 
 .screen.active {
     display: flex;
+    opacity: 1;
 }
 
 /* ===== ECRAN ANNIVERSAIRE ===== */
@@ -118,8 +121,13 @@ body {
 
 .photo-frame img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: cover;
+}
+
+.photo-frame {
+    aspect-ratio: 1 / 1;
 }
 
 .gift-text {
@@ -285,6 +293,8 @@ body {
 #wheel-canvas {
     border-radius: 50%;
     box-shadow: 0 0 40px rgba(102, 126, 234, 0.3), 0 0 80px rgba(102, 126, 234, 0.1);
+    width: min(420px, 85vw);
+    height: min(420px, 85vw);
 }
 
 /* ===== RESULTAT ===== */
@@ -361,4 +371,12 @@ body {
     color: #c9b3ff;
     line-height: 1.6;
     margin-bottom: 0.5rem;
+}
+
+.result-joke {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: #ffd200;
+    font-style: italic;
 }

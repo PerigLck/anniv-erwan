@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bon Anniversaire Erwan !</title>
+    <meta property="og:title" content="🎂 Bon Anniversaire Erwan !">
+    <meta property="og:description" content="Joyeux anniversaire grand frère ! Un cadeau spécial t'attend...">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="photos/IMG_20260412_143653.jpg">
+    <meta name="description" content="Joyeux anniversaire Erwan ! Un cadeau spécial t'attend.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -51,7 +56,7 @@
 
         <div class="wheel-container">
             <div class="wheel-pointer">▼</div>
-            <canvas id="wheel-canvas" width="420" height="420"></canvas>
+            <canvas id="wheel-canvas"></canvas>
         </div>
 
         <button class="btn btn-spin" id="spin-btn" onclick="spinWheel()">🎲 Lancer la roue !</button>
@@ -61,7 +66,7 @@
                 <p class="result-label">🎉 Tu as gagné une action 🎉</p>
                 <h2 class="result-company" id="result-company"></h2>
                 <p class="result-ticker" id="result-ticker"></p>
-                <p class="result-message">Joyeux anniversaire Erwan !<br>Cette action est à toi 🎁</p>
+                <p class="result-message">Joyeux anniversaire Erwan !<br>Cette action est à toi 🎁<br><span class="result-joke">(vends pas tout comme les solana hein 😏)</span></p>
                 <button class="btn btn-retry" onclick="retry()">🔄 Relancer</button>
             </div>
         </div>

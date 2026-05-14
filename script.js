@@ -34,11 +34,32 @@ function createConfetti() {
     }
 }
 
+// === TICK SOUND ===
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playTick() {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 1200;
+    osc.type = "sine";
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.06);
+}
+
 // === NAVIGATION ===
 function showRoulette() {
-    document.getElementById("birthday-screen").classList.remove("active");
-    document.getElementById("roulette-screen").classList.add("active");
-    initWheel();
+    const birthday = document.getElementById("birthday-screen");
+    const roulette = document.getElementById("roulette-screen");
+    birthday.style.opacity = "0";
+    setTimeout(() => {
+        birthday.classList.remove("active");
+        roulette.classList.add("active");
+        requestAnimationFrame(() => { roulette.style.opacity = "1"; });
+        initWheel();
+    }, 500);
 }
 
 // === ROUE ===
@@ -47,21 +68,33 @@ function pickRandomCompanies() {
     return shuffled.slice(0, SEGMENTS);
 }
 
-function initWheel() {
+function sizeCanvas() {
     canvas = document.getElementById("wheel-canvas");
+    const size = Math.min(420, window.innerWidth * 0.85);
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
     ctx = canvas.getContext("2d");
+    ctx.scale(dpr, dpr);
+    canvas._logicalSize = size;
+}
+
+function initWheel() {
+    sizeCanvas();
     wheelCompanies = pickRandomCompanies();
     currentAngle = 0;
     drawWheel();
+    window.addEventListener("resize", () => { sizeCanvas(); drawWheel(); });
 }
 
 function drawWheel() {
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = canvas.width / 2 - 10;
+    const size = canvas._logicalSize;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = size / 2 - 10;
     const segmentAngle = (2 * Math.PI) / SEGMENTS;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, size, size);
 
     // Ombre extérieure
     ctx.save();
@@ -93,7 +126,8 @@ function drawWheel() {
         ctx.rotate(startAngle + segmentAngle / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "white";
-        ctx.font = "bold 11px 'Segoe UI', sans-serif";
+        const fontSize = Math.max(11, Math.round(size / 28));
+        ctx.font = `bold ${fontSize}px 'Segoe UI', sans-serif`;
         ctx.shadowColor = "rgba(0,0,0,0.5)";
         ctx.shadowBlur = 3;
 
@@ -153,6 +187,8 @@ function spinWheel() {
         return 1 - Math.pow(1 - t, 3);
     }
 
+    let lastSegIndex = -1;
+
     function animate(now) {
         const elapsed = now - startTime;
         const t = Math.min(elapsed / duration, 1);
@@ -160,6 +196,14 @@ function spinWheel() {
 
         currentAngle = startAngle + totalRotation * eased;
         drawWheel();
+
+        // Tick sound when crossing a segment boundary
+        const pointerAngle = (-Math.PI / 2 - currentAngle) % (2 * Math.PI);
+        const segIndex = Math.floor(((pointerAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI) / segmentAngle);
+        if (segIndex !== lastSegIndex) {
+            lastSegIndex = segIndex;
+            playTick();
+        }
 
         if (t < 1) {
             requestAnimationFrame(animate);
@@ -183,6 +227,9 @@ function showResult(company) {
 
 function launchResultConfetti() {
     const container = document.getElementById("result-container");
+    // Clean up previous confetti
+    container.querySelectorAll(".confetti").forEach(el => el.remove());
+
     const colors = ["#ffd200", "#ff6b6b", "#4ecdc4", "#667eea", "#764ba2", "#f093fb"];
 
     for (let i = 0; i < 60; i++) {
